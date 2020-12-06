@@ -1,5 +1,7 @@
 package com.example;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.common.base.Splitter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,8 +11,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Input {
-
-  private static final Splitter NUL_SPLITTER = Splitter.on('\0').omitEmptyStrings();
+  private static final Splitter GROUP_SPLITTER = Splitter.on("\n\n");
+  private static final Splitter LINE_SPLITTER = Splitter.on('\n').omitEmptyStrings();
 
   private static final Path ROOT = Paths.get(System.getenv("HOME"))
       .resolve(Paths.get("advent-of-code-2020/src"));
@@ -28,9 +30,12 @@ public class Input {
     }
   }
 
-  public static Stream<List<String>> getGrouped(Class<?> cls) {
-    return Splitter.on('\n').splitToList(getAsString(cls).replaceAll("(\\S)\n", "$1\0")).stream()
-        .map(NUL_SPLITTER::splitToList);
+  public static Stream<String> getLines(Class<?> cls) {
+    return get(cls).stream();
+  }
+
+  public static Stream<List<String>> getGroups(Class<?> cls) {
+    return GROUP_SPLITTER.splitToList(getAsString(cls)).stream().map(LINE_SPLITTER::splitToList);
   }
 
   public static String getAsString(Class<?> cls) {

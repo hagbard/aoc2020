@@ -8,10 +8,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.function.IntBinaryOperator;
 
+// Sum (OR) = 6742
+// Sum (AND) = 3447
 public class Main {
   public static void main(String[] args) {
     ImmutableList<int[]> masks =
-        Input.getGrouped(Main.class).map(g -> g.stream().mapToInt(Main::toMask).toArray()).collect(toImmutableList());
+        Input.getGroups(Main.class).map(g -> g.stream().mapToInt(Main::toMask).toArray()).collect(toImmutableList());
     System.out.format("Sum (OR) = %d\n", sumAnswers(masks, (a, b) -> a | b));
     System.out.format("Sum (AND) = %d\n", sumAnswers(masks, (a, b) -> a & b));
   }

@@ -3,15 +3,17 @@ package com.example.day1;
 import static java.util.stream.Collectors.toSet;
 
 import com.example.Input;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+// 51 x 1969 = 100419
+// 565 x 972 x 483 = 265253940
+// 972 x 565 x 483 = 265253940
+// 483 x 565 x 972 = 265253940
 public class Main {
 
   public static void main(String[] args) {
-    List<String> input = Input.get(Main.class);
-    Set<Long> values = input.stream().mapToLong(Long::parseUnsignedLong).boxed().collect(toSet());
+    Set<Long> values = Input.getLines(Main.class).mapToLong(Long::parseUnsignedLong).boxed().collect(toSet());
 
     findResultFor(2020, values)
         .ifPresent(n -> System.out.format("%d x %d = %d\n", n, 2020 - n, n * (2020 - n)));

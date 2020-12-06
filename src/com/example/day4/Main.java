@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+// Valid = 254
+// Valid = 184
 public class Main {
 
   private enum Key {
@@ -77,8 +79,6 @@ public class Main {
     String raw = Input.getAsString(Main.class).replaceAll("(\\S)\n", "$1 ");
     List<Map<String, String>> maps =
         Splitter.on('\n').trimResults().splitToList(raw).stream().map(MAP_SPLITTER::split).collect(toList());
-    System.out.println(maps);
-
     System.out.format("Valid = %d\n", maps.stream().filter(HAS_REQUIRED).count());
     System.out.format("Valid = %d\n", maps.stream().filter(IS_VALID).count());
   }

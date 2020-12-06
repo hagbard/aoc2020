@@ -1,6 +1,6 @@
 package com.example.day2;
 
-import static com.example.Checks.checkState;
+import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Valid = 396
+// Valid = 428
 public class Main {
   private static final Pattern ENTRY = Pattern.compile("(\\d+)-(\\d+) ([a-z]): (.*)");
 
@@ -21,7 +23,7 @@ public class Main {
     boolean check(int a, int b, char c, String pw);
   }
 
-  static boolean check(String s, Checker c) {
+  private static boolean check(String s, Checker c) {
     Matcher m = ENTRY.matcher(s);
     checkState(m.matches());
     return c.check(parseUnsignedInt(m.group(1)), parseUnsignedInt(m.group(2)), m.group(3).charAt(0), m.group(4));

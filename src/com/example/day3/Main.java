@@ -1,16 +1,17 @@
 package com.example.day3;
 
-import static com.example.Checks.checkState;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.stream.Collectors.toList;
 
 import com.example.Input;
 import java.util.List;
 
+// Trees = 167
+// Result = 736527114
 public class Main {
 
   public static void main(String[] args) {
-    List<String> input = Input.get(Main.class);
-    List<Integer> masks = input.stream().map(Main::asInteger).collect(toList());
+    List<Integer> masks = Input.getLines(Main.class).map(Main::asInteger).collect(toList());
 
     int count = countTrees(masks, 3, 1);
     System.out.format("Trees = %d\n", count);

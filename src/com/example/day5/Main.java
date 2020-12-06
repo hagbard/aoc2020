@@ -9,10 +9,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
+// max ID = 906
+// my ID = 519
 public class Main {
 
   public static void main(String[] args) {
-    ImmutableSortedSet<Integer> ids = Input.get(Main.class).stream()
+    ImmutableSortedSet<Integer> ids = Input.getLines(Main.class)
         .map(s -> s.replaceAll("[BR]", "1").replaceAll("[FL]", "0"))
         .map(s -> Integer.parseUnsignedInt(s, 2))
         .collect(toImmutableSortedSet(Ordering.natural()));
