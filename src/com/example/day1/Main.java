@@ -10,7 +10,7 @@ import java.util.Set;
 public class Main {
 
   public static void main(String[] args) {
-    List<String> input = Input.getInput(Main.class);
+    List<String> input = Input.get(Main.class);
     Set<Long> values = input.stream().mapToLong(Long::parseUnsignedLong).boxed().collect(toSet());
 
     findResultFor(2020, values)

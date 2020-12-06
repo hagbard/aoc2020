@@ -74,7 +74,7 @@ public class Main {
       HAS_REQUIRED.and(m -> m.entrySet().stream().allMatch(e -> Key.isValid(e.getKey(), e.getValue())));
 
   public static void main(String[] args) {
-    String raw = Input.getInputAsString(Main.class).replaceAll("(\\S)\n", "$1 ");
+    String raw = Input.getAsString(Main.class).replaceAll("(\\S)\n", "$1 ");
     List<Map<String, String>> maps =
         Splitter.on('\n').trimResults().splitToList(raw).stream().map(MAP_SPLITTER::split).collect(toList());
     System.out.println(maps);

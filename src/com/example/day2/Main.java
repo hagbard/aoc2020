@@ -3,7 +3,6 @@ package com.example.day2;
 import static com.example.Checks.checkState;
 import static java.lang.Integer.parseUnsignedInt;
 
-import com.example.Checks;
 import com.example.Input;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +12,7 @@ public class Main {
   private static final Pattern ENTRY = Pattern.compile("(\\d+)-(\\d+) ([a-z]): (.*)");
 
   public static void main(String[] args) {
-    List<String> input = Input.getInput(Main.class);
+    List<String> input = Input.get(Main.class);
     System.out.format("Valid = %d\n", input.stream().filter(s -> check(s, Main::isValidFoo)).count());
     System.out.format("Valid = %d\n", input.stream().filter(s -> check(s, Main::isValidBar)).count());
   }

@@ -1,11 +1,31 @@
 package com.example.day6;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.example.Input;
-import java.util.List;
+import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.function.IntBinaryOperator;
 
 public class Main {
-
   public static void main(String[] args) {
-    List<String> input = Input.getInput(Main.class);
+    ImmutableList<int[]> masks =
+        Input.getGrouped(Main.class).map(g -> g.stream().mapToInt(Main::toMask).toArray()).collect(toImmutableList());
+    System.out.format("Sum (OR) = %d\n", sumAnswers(masks, (a, b) -> a | b));
+    System.out.format("Sum (AND) = %d\n", sumAnswers(masks, (a, b) -> a & b));
+  }
+
+  private static int toMask(String s) {
+    return s.codePoints().map(Main::toMaskBit).reduce(0, (a, b) -> a | b);
+  }
+
+  private static int toMaskBit(int c) {
+    checkArgument('a' <= c && c <= 'z', "%s", c);
+    return 1 << (c - 'a');
+  }
+
+  private static int sumAnswers(ImmutableList<int[]> masks, IntBinaryOperator reduce) {
+    return masks.stream().mapToInt(m -> Arrays.stream(m).reduce(reduce).orElse(0)).map(Integer::bitCount).sum();
   }
 }

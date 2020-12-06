@@ -6,6 +6,6 @@ import java.util.List;
 public class Main {
 
   public static void main(String[] args) {
-    List<String> input = Input.getInput(Main.class);
+    List<String> input = Input.get(Main.class);
   }
 }

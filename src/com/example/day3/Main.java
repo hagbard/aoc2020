@@ -3,15 +3,13 @@ package com.example.day3;
 import static com.example.Checks.checkState;
 import static java.util.stream.Collectors.toList;
 
-import com.example.Checks;
 import com.example.Input;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Main {
 
   public static void main(String[] args) {
-    List<String> input = Input.getInput(Main.class);
+    List<String> input = Input.get(Main.class);
     List<Integer> masks = input.stream().map(Main::asInteger).collect(toList());
 
     int count = countTrees(masks, 3, 1);
