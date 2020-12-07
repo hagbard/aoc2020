@@ -1,9 +1,11 @@
 package com.example.day2;
 
+import static com.example.Utils.applyMatch;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
+import com.example.Utils;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,9 +26,7 @@ public class Main {
   }
 
   private static boolean check(String s, Checker c) {
-    Matcher m = ENTRY.matcher(s);
-    checkState(m.matches());
-    return c.check(parseUnsignedInt(m.group(1)), parseUnsignedInt(m.group(2)), m.group(3).charAt(0), m.group(4));
+    return applyMatch(ENTRY, s, g -> c.check(parseUnsignedInt(g[0]), parseUnsignedInt(g[1]), g[2].charAt(0), g[3]));
   }
 
   private static boolean isValidFoo(int min, int max, char chr, String pw) {

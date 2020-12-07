@@ -1,5 +1,6 @@
 package com.example.day7;
 
+import static com.example.Utils.acceptMatch;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
@@ -48,10 +49,10 @@ public class Main {
   private static final Splitter SPLITTER = Splitter.on(',').trimResults();
 
   private static void addRuleTo(MutableValueGraph<String, Integer> graph, String rule) {
-    Utils.match(RULE, rule, p -> SPLITTER.splitToList(p.get(1)).forEach(s -> addEdgeTo(graph, p.get(0), s)));
+    acceptMatch(RULE, rule, g -> SPLITTER.splitToList(g[1]).forEach(s -> addEdgeTo(graph, g[0], s)));
   }
 
   private static void addEdgeTo(MutableValueGraph<String, Integer> graph, String label, String spec) {
-    Utils.match(CONTAINS, spec, p -> graph.putEdgeValue(label, p.get(1), parseUnsignedInt(p.get(0))));
+    acceptMatch(CONTAINS, spec, g -> graph.putEdgeValue(label, g[1], parseUnsignedInt(g[0])));
   }
 }

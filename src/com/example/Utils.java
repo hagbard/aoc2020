@@ -2,22 +2,25 @@ package com.example;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Utils {
 
-  public static void match(Pattern p, String s, Consumer<List<String>> fn) {
+  public static void acceptMatch(Pattern p, String s, Consumer<String[]> fn) {
+    applyMatch(p, s, g -> { fn.accept(g); return null; });
+  }
+
+  public static <V> V applyMatch(Pattern p, String s, Function<String[], V> fn) {
     Matcher m = p.matcher(s);
     checkArgument(m.matches(), "no match for '%s' using: %s", p, s);
-    List<String> groups = new ArrayList<>();
+    String[] groups = new String[m.groupCount() - 1];
     for (int n = 1; n <= m.groupCount(); n++) {
-      groups.add(m.group(n));
+      groups[n - 1] = m.group(n);
     }
-    fn.accept(groups);
+    return fn.apply(groups);
   }
 
   private Utils() {}
