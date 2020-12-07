@@ -16,7 +16,7 @@ public final class Utils {
   public static <V> V applyMatch(Pattern p, String s, Function<String[], V> fn) {
     Matcher m = p.matcher(s);
     checkArgument(m.matches(), "no match for '%s' using: %s", p, s);
-    String[] groups = new String[m.groupCount() - 1];
+    String[] groups = new String[m.groupCount()];
     for (int n = 1; n <= m.groupCount(); n++) {
       groups[n - 1] = m.group(n);
     }
