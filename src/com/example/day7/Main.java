@@ -4,7 +4,6 @@ import static com.example.Utils.acceptMatch;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
-import com.example.Utils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;

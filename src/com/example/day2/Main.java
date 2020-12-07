@@ -1,13 +1,10 @@
 package com.example.day2;
 
 import static com.example.Utils.applyMatch;
-import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
-import com.example.Utils;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // Valid = 396

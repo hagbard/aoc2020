@@ -1,7 +1,5 @@
 package com.example;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
-
 import com.google.common.base.Splitter;
 import java.io.IOException;
 import java.nio.file.Files;
