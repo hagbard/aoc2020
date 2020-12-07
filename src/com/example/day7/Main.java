@@ -6,9 +6,7 @@ import static com.google.common.collect.ImmutableMultiset.toImmutableMultiset;
 import com.example.Input;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
@@ -25,7 +23,7 @@ public class Main {
 
   public static void main(String[] args) {
     MutableValueGraph<String, Integer> graph = ValueGraphBuilder.directed().allowsSelfLoops(false).build();
-    Input.getLines(Main.class).map(Rule::parse).forEach(r -> r.addTo(graph));
+    Input.getLines(Main.class).filter(s -> !s.endsWith("contain no other bags.")).forEach(r -> addRuleTo(graph, r));
     System.out.format("count = %d\n", collectOuter(graph, MY_BAG, new HashSet<>()).size());
     System.out.format("count = %d\n", countInner(graph, MY_BAG, HashMultiset.create()));
   }
@@ -47,44 +45,24 @@ public class Main {
     return n;
   }
 
-  private static final class Rule {
-    // mirrored aqua bags contain 1 striped chartreuse bag, 4 faded coral bags, 1 muted silver bag.
-    // dim coral bags contain no other bags.
-    private static final Pattern RULE = Pattern.compile("(\\w.*) bags contain (.*)\\.");
-    private static final Pattern CONTAINS = Pattern.compile("(\\d+) (.*) bags?");
-    private static final Splitter SPLITTER = Splitter.on(',').trimResults();
+  private static final Pattern RULE = Pattern.compile("(\\w.*) bags contain (.*)\\.");
+  private static final Pattern CONTAINS = Pattern.compile("(\\d+) (.*) bags?");
+  private static final Splitter SPLITTER = Splitter.on(',').trimResults();
 
-    private final String label;
-    private final ImmutableMultiset<String> inner;
+  private static void addRuleTo(MutableValueGraph<String, Integer> graph, String rule) {
+    MatchResult m = match(RULE, rule);
+    String label = m.group(1);
+    SPLITTER.splitToList(m.group(2)).forEach(s -> addEdgeToGraph(graph, label, s));
+  }
 
-    public Rule(String label, ImmutableMultiset<String> inner) {
-      this.label = label;
-      this.inner = inner;
-    }
+  private static void addEdgeToGraph(MutableValueGraph<String, Integer> graph, String label, String spec) {
+    MatchResult m = match(CONTAINS, spec);
+    graph.putEdgeValue(label, m.group(2), Integer.parseUnsignedInt(m.group(1)));
+  }
 
-    static Rule parse(String s) {
-      MatchResult m = match(RULE, s);
-      ImmutableMultiset<String> inner = m.group(2).equals("no other bags")
-          ? ImmutableMultiset.of()
-          : SPLITTER.splitToList(m.group(2)).stream()
-              .map(Rule::parseContains)
-              .collect(toImmutableMultiset(Multiset.Entry::getElement, Multiset.Entry::getCount));
-      return new Rule(m.group(1), inner);
-    }
-
-    static Multiset.Entry<String> parseContains(String s) {
-      MatchResult m = match(CONTAINS, s);
-      return Multisets.immutableEntry(m.group(2), Integer.parseUnsignedInt(m.group(1)));
-    }
-
-    private static MatchResult match(Pattern pattern, String s) {
-      Matcher m = pattern.matcher(s);
-      checkArgument(m.matches(), s);
-      return m.toMatchResult();
-    }
-
-    public void addTo(MutableValueGraph<String, Integer> g) {
-      inner.forEachEntry((t, n) -> g.putEdgeValue(label, t, n));
-    }
+  private static MatchResult match(Pattern pattern, String s) {
+    Matcher m = pattern.matcher(s);
+    checkArgument(m.matches(), s);
+    return m.toMatchResult();
   }
 }
