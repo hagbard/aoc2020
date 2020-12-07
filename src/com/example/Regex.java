@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Utils {
+public final class Regex {
 
   public static void acceptMatch(Pattern p, String s, Consumer<String[]> fn) {
     applyMatch(p, s, g -> { fn.accept(g); return null; });
@@ -23,5 +23,5 @@ public final class Utils {
     return fn.apply(groups);
   }
 
-  private Utils() {}
+  private Regex() {}
 }

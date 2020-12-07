@@ -1,6 +1,6 @@
 package com.example.day2;
 
-import static com.example.Utils.applyMatch;
+import static com.example.Regex.applyMatch;
 import static java.lang.Integer.parseUnsignedInt;
 
 import com.example.Input;
