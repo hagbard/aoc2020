@@ -14,17 +14,20 @@ import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// count = 151
+// count = 41559
 public class Main {
   private static final String MY_BAG = "shiny gold";
 
   public static void main(String[] args) {
-    MutableValueGraph<String, Integer> g = ValueGraphBuilder.directed().allowsSelfLoops(false).build();
-    Input.getLines(Main.class).map(Rule::parse).forEach(r -> r.addTo(g));
-    System.out.format("count = %d\n", collectOuter(g, MY_BAG, new HashSet<>()).size());
-    System.out.format("count = %d\n", countInner(g, MY_BAG, HashMultiset.create()));
+    MutableValueGraph<String, Integer> graph = ValueGraphBuilder.directed().allowsSelfLoops(false).build();
+    Input.getLines(Main.class).map(Rule::parse).forEach(r -> r.addTo(graph));
+    System.out.format("count = %d\n", collectOuter(graph, MY_BAG, new HashSet<>()).size());
+    System.out.format("count = %d\n", countInner(graph, MY_BAG, HashMultiset.create()));
   }
 
   private static Set<String> collectOuter(ValueGraph<String, Integer> graph, String label, Set<String> visited) {
@@ -37,15 +40,15 @@ public class Main {
   }
 
   private static int countInner(ValueGraph<String, Integer> graph, String label, Multiset<String> counts) {
-    int c = graph.successors(label).stream().mapToInt(
-        t -> graph.edgeValue(label, t).get()
-            * (1 + (counts.elementSet().contains(t) ? counts.count(t) : countInner(graph, t, counts)))).sum();
-    counts.setCount(label, c);
-    return c;
+    int n = graph.successors(label).stream().mapToInt(
+        s -> graph.edgeValue(label, s).get()
+            * (1 + (counts.elementSet().contains(s) ? counts.count(s) : countInner(graph, s, counts)))).sum();
+    counts.setCount(label, n);
+    return n;
   }
 
   private static final class Rule {
-    // muted magenta bags contain 4 muted teal bags, 5 dotted turquoise bags, 3 pale plum bags, 4 faded bronze bags.
+    // mirrored aqua bags contain 1 striped chartreuse bag, 4 faded coral bags, 1 muted silver bag.
     // dim coral bags contain no other bags.
     private static final Pattern RULE = Pattern.compile("(\\w.*) bags contain (.*)\\.");
     private static final Pattern CONTAINS = Pattern.compile("(\\d+) (.*) bags?");
@@ -60,8 +63,7 @@ public class Main {
     }
 
     static Rule parse(String s) {
-      Matcher m = RULE.matcher(s);
-      checkArgument(m.matches());
+      MatchResult m = match(RULE, s);
       ImmutableMultiset<String> inner = m.group(2).equals("no other bags")
           ? ImmutableMultiset.of()
           : SPLITTER.splitToList(m.group(2)).stream()
@@ -71,9 +73,14 @@ public class Main {
     }
 
     static Multiset.Entry<String> parseContains(String s) {
-      Matcher m = CONTAINS.matcher(s);
-      checkArgument(m.matches(), s);
+      MatchResult m = match(CONTAINS, s);
       return Multisets.immutableEntry(m.group(2), Integer.parseUnsignedInt(m.group(1)));
+    }
+
+    private static MatchResult match(Pattern pattern, String s) {
+      Matcher m = pattern.matcher(s);
+      checkArgument(m.matches(), s);
+      return m.toMatchResult();
     }
 
     public void addTo(MutableValueGraph<String, Integer> g) {
