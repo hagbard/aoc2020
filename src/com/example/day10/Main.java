@@ -16,7 +16,8 @@ import java.util.stream.Stream;
 public class Main {
 
   public static void main(String[] args) {
-    int[] input = IntStream.concat(IntStream.of(0), Input.getLines(Main.class).mapToInt(Integer::parseUnsignedInt).sorted()).toArray();
+    int[] input = IntStream.concat(IntStream.of(0),
+        Input.getLines(Main.class).mapToInt(Integer::parseUnsignedInt).sorted()).toArray();
 
     ImmutableMultiset<Integer> diffs = IntStream.range(1, input.length)
         .map(n -> input[n] - input[n - 1]).boxed().collect(toImmutableMultiset());
@@ -26,6 +27,7 @@ public class Main {
     long combos = 1L;
     for (int i = 0, j = 1; j <= input.length; j++) {
       if (j == input.length || input[j] - input[i] > j - i) {
+        // Discovered a run of j - i consecutive values, but want min/max diff.
         combos *= fib3((j - i) - 1);
         i = j;
       }
