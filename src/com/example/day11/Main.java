@@ -2,21 +2,22 @@ package com.example.day11;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static com.google.common.collect.ImmutableMultiset.toImmutableMultiset;
 import static java.util.function.Predicate.isEqual;
 
 import com.example.Input;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 // Count = 2468
 // Count = 2214
 public class Main {
+
+  private final ImmutableList<Integer> DIRS = ImmutableList.of(
+      vec(-1, -1), vec(0, -1), vec(+1, -1),
+      vec(-1, 0), /*--------*/ vec(+1, 0),
+      vec(-1, +1), vec(0, +1), vec(+1, +1));
 
   private final Map<Integer, Boolean> state = new HashMap<>();
   private final int size;
@@ -28,14 +29,10 @@ public class Main {
       checkArgument(row.length() == size);
       for (int x = 0; x < size; x++) {
         if (row.charAt(x) == 'L') {
-          state.put(coord(x, y), false);
+          state.put(vec(x, y), false);
         }
       }
     }
-  }
-
-  private void reset() {
-    state.entrySet().forEach(e -> e.setValue(false));
   }
 
   public static void main(String[] args) {
@@ -60,33 +57,29 @@ public class Main {
   }
 
   private boolean shouldFlipFoo(int pos) {
-    long count = IntStream.of(
-        adj(pos, -1, -1), adj(pos, 0, -1), adj(pos, +1, -1),
-        adj(pos, -1, 0), /*-------------*/ adj(pos, +1, 0),
-        adj(pos, -1, +1), adj(pos, 0, +1), adj(pos, +1, +1))
-        .filter(this::isOccupied)
-        .count();
+    long count = DIRS.stream().map(d -> adj(pos, d)).filter(this::isOccupied).count();
     return state.get(pos) ? count >= 4 : count == 0;
   }
 
   private boolean shouldFlipBar(int pos) {
-    long count = IntStream.of(
-        see(pos, -1, -1), see(pos, 0, -1), see(pos, +1, -1),
-        see(pos, -1, 0), /*-------------*/ see(pos, +1, 0),
-        see(pos, -1, +1), see(pos, 0, +1), see(pos, +1, +1))
-        .sum();
+    long count = DIRS.stream().mapToInt(d -> see(pos, d)).sum();
     return state.get(pos) ? count >= 5 : count == 0;
   }
 
-  private int adj(int pos, int xAdj, int yAdj) {
-    int x = (pos & 0xFF) + xAdj;
-    int y = (pos >>> 16) + yAdj;
-    return (0 <= x && x < size && 0 <= y && y < size) ? coord(x, y) : -1;
+  private static int vec(int x, int y) {
+    return (x & 0xFFFF) + (y << 16);
   }
 
-  private int see(int pos, int xAdj, int yAdj) {
+  private int adj(int pos, int adj) {
+    int x = ((short) pos) + ((short) adj);
+    int y = (pos >> 16) + (adj >> 16);
+    return (0 <= x && x < size && 0 <= y && y < size) ? vec(x, y) : -1;
+  }
+
+  // No BoolStream so fudge it by returning a 0/1 counter for matches and summing.
+  private int see(int pos, int adj) {
     do {
-      pos = adj(pos, xAdj, yAdj);
+      pos = adj(pos, adj);
     } while (pos != -1 && !isChair(pos));
     return pos != -1 && isOccupied(pos) ? 1 : 0;
   }
@@ -99,7 +92,7 @@ public class Main {
     return state.containsKey(p);
   }
 
-  private static int coord(int x, int y) {
-    return x + (y << 16);
+  private void reset() {
+    state.entrySet().forEach(e -> e.setValue(false));
   }
 }
