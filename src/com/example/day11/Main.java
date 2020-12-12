@@ -5,21 +5,23 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.function.Predicate.isEqual;
 
 import com.example.Input;
+import com.example.Vec2;
 import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 // Count = 2468
 // Count = 2214
 public class Main {
 
-  private final ImmutableList<Integer> DIRS = ImmutableList.of(
+  private final ImmutableList<Vec2> DIRS = ImmutableList.of(
       vec(-1, -1), vec(0, -1), vec(+1, -1),
       vec(-1, 0), /*--------*/ vec(+1, 0),
       vec(-1, +1), vec(0, +1), vec(+1, +1));
 
-  private final Map<Integer, Boolean> state = new HashMap<>();
+  private final Map<Vec2, Boolean> state = new HashMap<>();
   private final int size;
 
   private Main(ImmutableList<String> lines) {
@@ -42,7 +44,7 @@ public class Main {
     System.out.format("Count = %d\n", puzzle.processSeating(puzzle::shouldFlipBar));
   }
 
-  private long processSeating(Predicate<Integer> shouldFlip) {
+  private long processSeating(Predicate<Vec2> shouldFlip) {
     long count = 0;
     long lastCount;
     do {
@@ -56,40 +58,43 @@ public class Main {
     return count;
   }
 
-  private boolean shouldFlipFoo(int pos) {
+  private boolean shouldFlipFoo(Vec2 pos) {
     long count = DIRS.stream().map(d -> adj(pos, d)).filter(this::isOccupied).count();
     return state.get(pos) ? count >= 4 : count == 0;
   }
 
-  private boolean shouldFlipBar(int pos) {
+  private boolean shouldFlipBar(Vec2 pos) {
     long count = DIRS.stream().mapToInt(d -> see(pos, d)).sum();
     return state.get(pos) ? count >= 5 : count == 0;
   }
 
-  private static int vec(int x, int y) {
-    return (x & 0xFFFF) + (y << 16);
+  private static Vec2 vec(int x, int y) {
+    return Vec2.vec(x, y);
   }
 
-  private int adj(int pos, int adj) {
-    int x = ((short) pos) + ((short) adj);
-    int y = (pos >> 16) + (adj >> 16);
-    return (0 <= x && x < size && 0 <= y && y < size) ? vec(x, y) : -1;
+  private Vec2 adj(Vec2 pos, Vec2 adj) {
+    return pos.add(adj);
   }
 
   // No BoolStream so fudge it by returning a 0/1 counter for matches and summing.
-  private int see(int pos, int adj) {
+  private int see(Vec2 pos, Vec2 adj) {
+    Optional<Vec2> v = Optional.of(pos);
     do {
-      pos = adj(pos, adj);
-    } while (pos != -1 && !isChair(pos));
-    return pos != -1 && isOccupied(pos) ? 1 : 0;
+      pos = pos.add(adj);
+    } while (inBounds(pos) && !isChair(pos));
+    return inBounds(pos) && isOccupied(pos) ? 1 : 0;
   }
 
-  private Boolean isOccupied(int p) {
-    return state.getOrDefault(p, false);
+  private Boolean isOccupied(Vec2 pos) {
+    return state.getOrDefault(pos, false);
   }
 
-  private Boolean isChair(int p) {
-    return state.containsKey(p);
+  private Boolean isChair(Vec2 pos) {
+    return state.containsKey(pos);
+  }
+
+  public boolean inBounds(Vec2 pos) {
+    return 0 <= pos.x && pos.x < size && 0 <= pos.y && pos.y < size;
   }
 
   private void reset() {
