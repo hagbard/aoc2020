@@ -23,6 +23,16 @@ public final class Vec2 {
     return new Vec2(x * scale, y * scale);
   }
 
+  public Vec2 rot(int dir) {
+      switch (dir) {
+        case 0: return this;
+        case 1: return vec(y, -x);
+        case 2: return mul(-1);
+        case 3: return vec(-y, x);
+      }
+      throw new IllegalArgumentException("bad direction: " + dir);
+  }
+
   @Override
   public boolean equals(Object o) {
     Vec2 v;

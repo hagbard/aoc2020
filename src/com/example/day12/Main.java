@@ -52,10 +52,9 @@ public class Main {
   }
 
   private static class Ship {
-
     private final ImmutableMap<Character, ShipOp> ops;
     private Vec2 pos = vec(0, 0);
-    private int headingDir = 0;  // [0..3]
+    private int heading = 0;  // [0..3]
     private Vec2 waypoint = vec(10, 1);
 
     Ship(ImmutableMap<Character, ShipOp> ops) {
@@ -67,27 +66,23 @@ public class Main {
     }
 
     void moveForward(int dist) {
-      moveBy(DIRS.get(headingDir).mul(dist));
+      moveBy(DIRS.get(heading).mul(dist));
     }
 
     void moveToWaypoint(int times) {
       moveBy(waypoint.mul(times));
     }
 
-    void rotateShip(int dir) {
-      this.headingDir = (headingDir + dir) & 0x3;
+    void rotateShip(int qangle) {
+      this.heading = (heading + qangle) & 0x3;
     }
 
     void moveWaypoint(Vec2 adj) {
       waypoint = waypoint.add(adj);
     }
 
-    void rotateWaypoint(int dir) {
-      switch (dir) {
-        case 1: waypoint = vec(waypoint.y, -waypoint.x); break;
-        case 2: waypoint = vec(-waypoint.x, -waypoint.y); break;
-        case 3: waypoint = vec(-waypoint.y, waypoint.x); break;
-      }
+    void rotateWaypoint(int qangle) {
+      waypoint = waypoint.rot(qangle);
     }
 
     int execute(ImmutableList<String> inst) {
