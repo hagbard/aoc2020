@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Depart = 3966
+// Result = 800177252346225
 public class Main {
 
   public static void main(String[] args) {
