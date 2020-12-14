@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 // Sum = 8332632930672
 // Sum = 4753238784664
 public abstract class Main {
-
   public static void main(String[] args) {
     Main foo = new FooProc();
     Input.getLines(Main.class).forEach(foo::handleLine);
@@ -78,11 +77,9 @@ public abstract class Main {
 
     private byte[] maskToIndices(long mask) {
       byte[] arr = new byte[Long.bitCount(mask)];
-      for (int n = 0, bit = 0; mask != 0; n++, bit++) {
-        int skipBits = Long.numberOfTrailingZeros(mask);
-        mask >>>= skipBits + 1;
-        bit += skipBits;
-        arr[n] = (byte) bit;
+      for (int n = 0; mask != 0; n++) {
+        arr[n] = (byte) Long.numberOfTrailingZeros(mask);
+        mask &= ~(1L << arr[n]);
       }
       return arr;
     }
