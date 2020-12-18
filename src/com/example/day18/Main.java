@@ -31,18 +31,15 @@ public class Main {
   }
 
   private static String fold(String s, Function<String, String> fn) {
-    String t;
-    do {
-      s = SEQ.matcher(t = s).replaceAll(r -> fn.apply(r.group(1)));
-    } while (!s.equals(t));
-    return s;
+    return eval(s, t -> SEQ.matcher(t).replaceAll(r -> fn.apply(r.group(1))));
   }
 
   private static String eval(String s, Pattern op) {
-    String t;
-    do {
-      s = op.matcher(t = s).replaceFirst(Main::fn);
-    } while (!s.equals(t));
+    return eval(s, t -> op.matcher(t).replaceFirst(Main::fn));
+  }
+
+  private static String eval(String s, Function<String, String> fn) {
+    for (String t = fn.apply(s); !t.equals(s); s = t, t = fn.apply(s)) { }
     return s;
   }
 
