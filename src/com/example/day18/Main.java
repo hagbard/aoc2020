@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 // Filthy = 6640667297513
 // Dirty = 451589894841552
 public class Main {
-
   private static final Pattern SEQ = Pattern.compile("\\(([^()]+)\\)");
   private static final Pattern ADD_OR_MUL = Pattern.compile("([0-9]+)([+*])([0-9]+)");
   private static final Pattern ADD = Pattern.compile("([0-9]+)([+])([0-9]+)");
